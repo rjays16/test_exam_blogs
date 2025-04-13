@@ -237,31 +237,32 @@
   }
   
   const confirmArchive = (blogId) => {
-    $q.dialog({
-      title: 'Confirm Archive',
-      message: 'Are you sure you want to archive this blog post?',
-      cancel: true,
-      persistent: true
-    }).onOk(async () => {
-      try {
-        await api.delete(`/blogs/${blogId}`)
-        
-        // Remove from local state
-        blogs.value = blogs.value.filter(blog => blog.id !== blogId)
-        
-        $q.notify({
-          color: 'positive',
-          message: 'Blog archived successfully',
-          icon: 'check_circle'
-        })
-      } catch (error) {
-        console.error('Failed to archive blog:', error)
-        $q.notify({
-          color: 'negative',
-          message: 'Failed to archive blog',
-          icon: 'warning'
-        })
-      }
-    })
-  }
+  // Use $q.dialog() method correctly
+  $q.dialog({
+    title: 'Confirm Archive',
+    message: 'Are you sure you want to archive this blog post?',
+    cancel: true,
+    persistent: true
+  }).onOk(async () => {
+    try {
+      await api.delete(`/blogs/${blogId}`)
+      
+      // Remove from local state
+      blogs.value = blogs.value.filter(blog => blog.id !== blogId)
+      
+      $q.notify({
+        color: 'positive',
+        message: 'Blog archived successfully',
+        icon: 'check_circle'
+      })
+    } catch (error) {
+      console.error('Failed to archive blog:', error)
+      $q.notify({
+        color: 'negative',
+        message: 'Failed to archive blog',
+        icon: 'warning'
+      })
+    }
+  })
+}
   </script>
