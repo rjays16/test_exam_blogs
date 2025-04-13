@@ -12,7 +12,7 @@
         />
 
         <q-toolbar-title>
-          Blog Management System
+          Blog Management Test Exam
         </q-toolbar-title>
 
         <q-space />
