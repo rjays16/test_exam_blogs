@@ -103,7 +103,10 @@
       </q-card>
       
       <!-- Modals -->
-      <add-blog-modal v-model="showAddModal" />
+      <add-blog-modal 
+      v-model="showAddModal" 
+      @blog-added="loadBlogs"
+      />
       
       <edit-blog-modal 
         v-model="showEditModal" 
@@ -156,32 +159,34 @@
     loadBlogs()
   })
   
-  const loadBlogs = async (page = 1) => {
-    loading.value = true
-    try {
-      const params = { 
-        page: page,
-        search: search.value
-      }
-      
-      const response = await api.get('/blogs', { params })
-      blogs.value = response.data.data
-      
-      // Update pagination
+  const loadBlogs = async () => {
+  loading.value = true
+  try {
+    const params = { 
+      page: 1, // Always load the first page after adding a new blog
+      search: search.value
+    }
+    
+    const response = await api.get('/blogs', { params })
+    blogs.value = response.data.data || response.data // Handle both paginated and non-paginated responses
+    
+    // Update pagination if using paginated response
+    if (response.data.current_page) {
       pagination.value.page = response.data.current_page
       pagination.value.rowsNumber = response.data.total
       pagination.value.rowsPerPage = response.data.per_page
-    } catch (error) {
-      console.error('Failed to fetch blogs:', error)
-      $q.notify({
-        color: 'negative',
-        message: 'Failed to load blogs',
-        icon: 'error'
-      })
-    } finally {
-      loading.value = false
     }
+  } catch (error) {
+    console.error('Failed to fetch blogs:', error)
+    $q.notify({
+      color: 'negative',
+      message: 'Failed to load blogs',
+      icon: 'error'
+    })
+  } finally {
+    loading.value = false
   }
+}
   
   const onRequest = (props) => {
     loadBlogs(props.pagination.page)

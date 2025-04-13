@@ -1,110 +1,136 @@
 <template>
-    <q-dialog v-model="showDialog" persistent>
-      <q-card style="width: 700px; max-width: 80vw;">
-        <q-card-section class="row items-center q-pb-none">
-          <div class="text-h6">Add New Blog Post</div>
-          <q-space />
-          <q-btn icon="close" flat round dense v-close-popup />
-        </q-card-section>
-  
-        <q-card-section>
-          <q-form @submit="onSubmit" class="q-gutter-md">
-            <q-input
-              v-model="form.title"
-              label="Title"
-              :rules="[val => !!val || 'Title is required']"
-            />
-  
-            <q-input
-              v-model="form.content"
-              type="textarea"
-              label="Content"
-              rows="6"
-              :rules="[val => !!val || 'Content is required']"
-            />
-  
-            <q-select
-              v-model="form.status"
-              :options="statusOptions"
-              label="Status"
-              :rules="[val => !!val || 'Status is required']"
-            />
-  
-            <div class="row justify-end q-mt-md">
-              <q-btn label="Cancel" flat v-close-popup />
-              <q-btn 
-                label="Create" 
-                type="submit" 
-                color="primary" 
-                :loading="blogStore.loading"
-                class="q-ml-sm" 
-              />
-            </div>
-          </q-form>
-        </q-card-section>
-      </q-card>
-    </q-dialog>
-  </template>
-  
-  <script setup>
-  import { ref, computed } from 'vue'
-  import { useBlogStore } from 'src/stores/blog'
-  import { useQuasar } from 'quasar'
-  
-  const $q = useQuasar()
-  const blogStore = useBlogStore()
-  
-  const props = defineProps({
+  <q-dialog v-model="isOpen" persistent>
+    <q-card style="min-width: 500px">
+      <q-card-section class="row items-center">
+        <div class="text-h6">Create New Blog</div>
+        <q-space />
+        <q-btn icon="close" flat round dense v-close-popup />
+      </q-card-section>
+      <q-separator />
+      <q-card-section>
+        <q-form @submit.prevent="onSubmit" class="q-gutter-md">
+          <q-input
+            v-model="form.title"
+            label="Title"
+            :rules="[val => !!val || 'Title is required']"
+            outlined
+          />
+          
+          <q-editor
+            v-model="form.content"
+            min-height="250px"
+            :rules="[val => !!val || 'Content is required']"
+          />
+          
+          <q-select
+            v-model="form.status"
+            :options="statusOptions"
+            label="Status"
+            outlined
+          />
+        </q-form>
+      </q-card-section>
+      <q-card-actions align="right">
+        <q-btn flat label="Cancel" color="negative" v-close-popup />
+        <q-btn flat label="Save" color="primary" @click="onSubmit" :loading="loading" />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+</template>
+<script>
+import { ref, computed } from 'vue';
+import { useQuasar } from 'quasar';
+import { api } from 'src/boot/axios';
+export default {
+  props: {
     modelValue: {
       type: Boolean,
       default: false
     }
-  })
+  },
   
-  const emit = defineEmits(['update:modelValue'])
+  emits: ['update:modelValue', 'blog-added'],
   
-  const form = ref({
-    title: '',
-    content: '',
-    status: 'hidden'
-  })
-  
-  const statusOptions = [
-    { label: 'Published', value: 'published' },
-    { label: 'Hidden', value: 'hidden' }
-  ]
-  
-  const showDialog = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:modelValue', value)
-  })
-  
-  const resetForm = () => {
-    form.value = {
+  setup(props, { emit }) {
+    const $q = useQuasar();
+    
+    const loading = ref(false);
+    
+    const form = ref({
       title: '',
       content: '',
       status: 'hidden'
-    }
+    });
+    
+    const statusOptions = [
+      { label: 'Published', value: 'published' },
+      { label: 'Hidden', value: 'hidden' }
+    ];
+    
+    const isOpen = computed({
+      get: () => props.modelValue,
+      set: (value) => emit('update:modelValue', value)
+    });
+    
+    const resetForm = () => {
+      form.value = {
+        title: '',
+        content: '',
+        status: 'hidden'
+      };
+    };
+    
+    const onSubmit = async () => {
+  if (!form.value.title || !form.value.content) {
+    $q.notify({
+      color: 'negative',
+      message: 'Please fill in all required fields',
+      icon: 'warning'
+    });
+    return;
   }
   
-  const onSubmit = async () => {
-    try {
-      await blogStore.createBlog(form.value)
-      showDialog.value = false
-      resetForm()
-      $q.notify({
-        color: 'positive',
-        position: 'top',
-        message: 'Blog post created successfully',
-        icon: 'check_circle'
-      })
-    } catch (error) {
-      $q.notify({
-        color: 'negative',
-        position: 'top',
-        message: error.response?.data?.message || 'Failed to create blog post',
-        icon: 'warning'
-      })
-    }
+  loading.value = true;
+  
+  // Create a request payload with proper format
+  const payload = {
+    title: form.value.title,
+    content: form.value.content,
+    status: form.value.status.value // Extract just the value from the status object
+  };
+  
+  try {
+    await api.post('/blogs', payload);
+    
+    $q.notify({
+      color: 'positive',
+      message: 'Blog created successfully',
+      icon: 'check_circle'
+    });
+    
+    resetForm();
+    isOpen.value = false;
+    emit('blog-added');
+  } catch (error) {
+    console.error('Failed to create blog:', error);
+    
+    $q.notify({
+      color: 'negative',
+      message: error.response?.data?.message || 'Failed to create blog. Please try again.',
+      icon: 'warning'
+    });
+  } finally {
+    loading.value = false;
   }
-  </script>
+};
+    
+    return {
+      isOpen,
+      form,
+      loading,
+      statusOptions,
+      onSubmit
+    };
+  }
+}
+</script>

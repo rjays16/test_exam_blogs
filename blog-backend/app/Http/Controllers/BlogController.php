@@ -23,7 +23,7 @@ class BlogController extends Controller
         }
         
         $blogs = $query->with('user:id,name')
-                      ->orderBy('created_at', 'desc')
+                      ->orderBy('created_at', 'asc')
                       ->paginate(10);
         
         return response()->json($blogs);
@@ -34,24 +34,32 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
+        \Log::info('Blog creation attempt', $request->all());
+        
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|max:255',
             'content' => 'required|string',
             'status' => 'required|in:published,hidden',
         ]);
-
+    
         if ($validator->fails()) {
+            \Log::warning('Blog validation failed', $validator->errors()->all());
             return response(['errors' => $validator->errors()->all()], 422);
         }
-
-        $blog = Blog::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'status' => $request->status,
-            'created_by' => auth()->id(),
-        ]);
-
-        return response()->json($blog, 201);
+    
+        try {
+            $blog = Blog::create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'status' => $request->status,
+                'created_by' => auth()->id(),
+            ]);
+            
+            return response()->json($blog, 201);
+        } catch (\Exception $e) {
+            \Log::error('Blog creation error', ['message' => $e->getMessage()]);
+            return response(['message' => $e->getMessage()], 500);
+        }
     }
 
     /**

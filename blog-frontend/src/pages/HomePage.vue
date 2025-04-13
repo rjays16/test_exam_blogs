@@ -1,8 +1,8 @@
 <template>
     <q-page padding>
       <div class="text-center q-pt-lg">
-        <h1 class="text-h3 q-mb-md">Welcome to Blog Management</h1>
-        <p class="text-body1">Manage your blogs efficiently</p>
+        <h1 class="text-h3 q-mb-md">Test Exam Blogs</h1>
+        <p class="text-body1">Manage your blogs</p>
         
         <q-card class="my-card q-mt-xl">
           <q-card-section>
