@@ -1,9 +1,35 @@
 const routes = [
   {
-    path: '/',
+    path: '/MainLayout',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { 
+        path: '/home', 
+        name: 'home',
+        component: () => import('pages/IndexPage.vue') 
+      }
+    ]
+  },
+  {
+    path: '/',
+    name: 'login',
+    component: () => import('pages/LoginPage.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('pages/SignupPage.vue')
+  },
+  {
+    path: '/blogs',
+    component: () => import('layouts/MainLayout.vue'),
+    meta: { requiresAuth: true },
+    children: [
+      {
+        path: '',
+        name: 'blogs',
+        component: () => import('pages/BlogsPage.vue')
+      }
     ]
   },
 
