@@ -140,7 +140,7 @@
   const selectedBlog = ref(null)
   
   const pagination = computed(() => ({
-  sortBy: 'created_at',
+  sortBy: 'id',
   descending: true,
   page: blogs.value.length > 0 ? blogs.value[0].current_page : 1,
   rowsPerPage: 10,
