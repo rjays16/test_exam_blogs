@@ -20,8 +20,10 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       
       try {
+        console.log('Attempting login with:', credentials)
         const response = await api.post('/login', credentials)
-        
+        console.log('Login response:', response.data)
+
         this.user = response.data.user
         this.token = response.data.access_token
         
@@ -31,6 +33,8 @@ export const useAuthStore = defineStore('auth', {
         
         return response
       } catch (error) {
+        console.error('Login error:', error)
+        console.error('Response data:', error.response?.data)
         this.error = error.response?.data?.message || 'Login failed'
         throw error
       } finally {

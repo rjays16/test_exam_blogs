@@ -13,7 +13,7 @@ api.interceptors.request.use(function (config) {
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
-  return config
+  return config;
 })
 
 // Add a response interceptor to handle common errors
