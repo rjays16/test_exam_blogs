@@ -22,8 +22,8 @@ class BlogController extends Controller
             $query->where('title', 'LIKE', "%{$searchTerm}%");
         }
         
-        $blogs = $query->with('user:id,name')
-                      ->orderBy('created_at', 'asc')
+        $blogs = $query->with('user:id,name,email')
+                      ->orderBy('id', 'asc')
                       ->paginate(10);
         
         return response()->json($blogs);

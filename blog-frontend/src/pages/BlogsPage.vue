@@ -52,6 +52,9 @@
                   {{ props.row.status }}
                 </q-chip>
               </q-td>
+              <q-td key="created_by" :props="props">
+                {{ props.row.user ? props.row.user.name : 'Unknown' }}
+              </q-td>
               <q-td key="created_at" :props="props">
                 {{ new Date(props.row.created_at).toLocaleDateString() }}
               </q-td>
@@ -151,6 +154,7 @@
     { name: 'id', label: 'ID', field: 'id', sortable: true, align: 'left' },
     { name: 'title', label: 'Title', field: 'title', sortable: true, align: 'left' },
     { name: 'status', label: 'Status', field: 'status', sortable: true, align: 'left' },
+    { name: 'created_by', label: 'Created By', field: row => row.user?.name || 'Unknown', sortable: true, align: 'left' },
     { name: 'created_at', label: 'Created Date', field: 'created_at', sortable: true, align: 'left' },
     { name: 'actions', label: 'Actions', field: 'actions', align: 'center' }
   ]
