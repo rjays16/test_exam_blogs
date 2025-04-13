@@ -112,10 +112,11 @@
       />
       
       <edit-blog-modal 
-        v-model="showEditModal" 
-        :blog-id="selectedBlog?.id" 
-        :blog-data="selectedBlog" 
-      />
+  v-model="showEditModal" 
+  :blog-id="selectedBlog?.id" 
+  :blog-data="selectedBlog"
+  @update="handleBlogUpdate"
+/>
       
       <preview-blog-modal 
         v-model="showPreviewModal" 
@@ -209,6 +210,34 @@
     selectedBlog.value = blog
     showPreviewModal.value = true
   }
+
+  const handleBlogUpdate = async (updatedBlog) => {
+  try {
+    await api.put(`/blogs/${updatedBlog.id}`, updatedBlog)
+    
+    // Update local state
+    const index = blogs.value.findIndex(b => b.id === updatedBlog.id)
+    if (index !== -1) {
+      blogs.value[index] = { ...blogs.value[index], ...updatedBlog }
+    }
+    
+    $q.notify({
+      color: 'positive',
+      message: 'Blog updated successfully',
+      icon: 'check_circle'
+    })
+    
+    // Optionally reload blogs
+    loadBlogs()
+  } catch (error) {
+    console.error('Failed to update blog:', error)
+    $q.notify({
+      color: 'negative',
+      message: 'Failed to update blog',
+      icon: 'warning'
+    })
+  }
+}
   
   const toggleStatus = async (blog) => {
     const newStatus = blog.status === 'published' ? 'hidden' : 'published'
