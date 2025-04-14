@@ -218,17 +218,21 @@
     // Update local state
     const index = blogs.value.findIndex(b => b.id === updatedBlog.id)
     if (index !== -1) {
-      blogs.value[index] = { ...blogs.value[index], ...updatedBlog }
+      blogs.value[index] = { 
+        ...blogs.value[index], 
+        ...updatedBlog,
+        user: blogs.value[index].user  
+      }
     }
+
+    loadBlogs()
     
     $q.notify({
       color: 'positive',
       message: 'Blog updated successfully',
       icon: 'check_circle'
     })
-    
-    // Optionally reload blogs
-    loadBlogs()
+  
   } catch (error) {
     console.error('Failed to update blog:', error)
     $q.notify({

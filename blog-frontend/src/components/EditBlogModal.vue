@@ -121,15 +121,17 @@ export default {
       
       try {
         // Make the actual API call to update the blog
-        await api.put(`/blogs/${this.blogId}`, this.form)
-        
+    await api.put(`/blogs/${this.blogId}`, this.form)
+      
+
         this.$q.notify({
           color: 'positive',
           message: 'Blog updated successfully',
-          icon: 'check_circle'
+          icon: 'check_circle',
+          badgeColor: ''
         })
         
-        this.$emit('blog-updated')
+
         this.isOpen = false
       } catch (error) {
         console.error('Failed to update blog:', error)
