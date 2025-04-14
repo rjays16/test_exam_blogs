@@ -122,4 +122,17 @@ class BlogController extends Controller
         $blog->delete();
         return response()->json(['message' => 'Blog archived successfully']);
     }
+
+    public function getStats()
+{
+    $totalBlogs = Blog::count();
+    $published = Blog::where('status', 'published')->count();
+    $hidden = Blog::where('status', 'hidden')->count();
+    
+    return response()->json([
+        'totalBlogs' => $totalBlogs,
+        'published' => $published,
+        'draft' => $hidden
+    ]);
+}
 }

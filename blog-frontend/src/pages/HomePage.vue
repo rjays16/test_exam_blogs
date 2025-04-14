@@ -64,21 +64,22 @@
   
   <script setup>
   import { ref, onMounted } from 'vue';
-  
+  import { api } from 'src/boot/axios';
+
   const stats = ref({
     totalBlogs: 0,
     published: 0,
     draft: 0
   });
   
-  onMounted(() => {
-    // Using static data for now
-    stats.value = {
-      totalBlogs: 5,
-      published: 3,
-      draft: 2
-    };
-  });
+  onMounted(async () => {
+  try {
+    const response = await api.get('/blog-stats');
+    stats.value = response.data;
+  } catch (error) {
+    console.error('Failed to load blog stats:', error);
+  }
+});
   </script>
   
   <style scoped>

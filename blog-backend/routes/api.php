@@ -23,5 +23,5 @@ Route::middleware('auth:api')->group(function () {
     // Blog routes
     Route::apiResource('blogs', BlogController::class);
     Route::patch('/blogs/{blog}/status', [BlogController::class, 'updateStatus']);
-
+    Route::get('/blog-stats', [BlogController::class, 'getStats']);
 });

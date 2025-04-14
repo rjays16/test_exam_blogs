@@ -25,6 +25,10 @@
           <q-select
             v-model="form.status"
             :options="statusOptions"
+            option-value="value"
+            option-label="label"
+            emit-value
+            map-options
             label="Status"
             outlined
           />
@@ -96,7 +100,7 @@ export default {
   const payload = {
     title: form.value.title,
     content: form.value.content,
-    status: form.value.status.value // Extract just the value from the status object
+    status: form.value.status // Extract just the value from the status object
   };
   
   try {

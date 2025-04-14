@@ -27,6 +27,10 @@
           <q-select
             v-model="form.status"
             :options="statusOptions"
+            option-value="value"
+            option-label="label"
+            emit-value
+            map-options
             label="Status"
             outlined
           />
@@ -42,6 +46,8 @@
 </template>
 
 <script>
+import { api } from 'src/boot/axios'
+
 export default {
   props: {
     modelValue: {
@@ -90,9 +96,9 @@ export default {
       handler(newVal) {
         if (newVal && newVal.id) {
           this.form = {
-            title: newVal.title,
-            content: newVal.content,
-            status: newVal.status
+            title: newVal.title || '',
+            content: newVal.content || '',
+            status: newVal.status || 'hidden'
           }
         }
       }
@@ -100,7 +106,7 @@ export default {
   },
   
   methods: {
-    onSubmit() {
+    async onSubmit() {
       // Validate form
       if (!this.form.title || !this.form.content) {
         this.$q.notify({
@@ -113,14 +119,29 @@ export default {
       
       this.loading = true
       
-      // Emit update event with blog data
-      this.$emit('update', {
-        id: this.blogId,
-        ...this.form
-      })
-      
-      this.loading = false
-      this.isOpen = false
+      try {
+        // Make the actual API call to update the blog
+        await api.put(`/blogs/${this.blogId}`, this.form)
+        
+        this.$q.notify({
+          color: 'positive',
+          message: 'Blog updated successfully',
+          icon: 'check_circle'
+        })
+        
+        this.$emit('blog-updated')
+        this.isOpen = false
+      } catch (error) {
+        console.error('Failed to update blog:', error)
+        
+        this.$q.notify({
+          color: 'negative',
+          message: error.response?.data?.message || 'Failed to update blog',
+          icon: 'warning'
+        })
+      } finally {
+        this.loading = false
+      }
     }
   }
 }
