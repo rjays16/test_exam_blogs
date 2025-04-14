@@ -124,15 +124,15 @@ class BlogController extends Controller
     }
 
     public function getStats()
-{
-    $totalBlogs = Blog::count();
-    $published = Blog::where('status', 'published')->count();
-    $hidden = Blog::where('status', 'hidden')->count();
-    
-    return response()->json([
-        'totalBlogs' => $totalBlogs,
-        'published' => $published,
-        'draft' => $hidden
-    ]);
-}
+    {
+        $totalBlogs = Blog::count();
+        $published = Blog::where('status', 'published')->count();
+        $hidden = Blog::where('status', 'hidden')->count();
+        
+        return response()->json([
+            'totalBlogs' => $totalBlogs,
+            'published' => $published,
+            'draft' => $hidden
+        ]);
+    }
 }

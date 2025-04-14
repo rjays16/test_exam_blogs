@@ -121,9 +121,8 @@ export default {
       
       try {
         // Make the actual API call to update the blog
-    await api.put(`/blogs/${this.blogId}`, this.form)
-      
-
+        await api.put(`/blogs/${this.blogId}`, this.form)
+        
         this.$q.notify({
           color: 'positive',
           message: 'Blog updated successfully',

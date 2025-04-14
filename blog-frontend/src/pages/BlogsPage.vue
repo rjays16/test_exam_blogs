@@ -112,11 +112,12 @@
       />
       
       <edit-blog-modal 
-  v-model="showEditModal" 
-  :blog-id="selectedBlog?.id" 
-  :blog-data="selectedBlog"
-  @update="handleBlogUpdate"
-/>
+      v-model="showEditModal" 
+      :blog-id="selectedBlog?.id" 
+      :blog-data="selectedBlog"
+      @update="handleBlogUpdate"
+      
+      />
       
       <preview-blog-modal 
         v-model="showPreviewModal" 
@@ -270,7 +271,6 @@
   }
   
   const confirmArchive = (blogId) => {
-  // Use $q.dialog() method correctly
   $q.dialog({
     title: 'Confirm Archive',
     message: 'Are you sure you want to archive this blog post?',

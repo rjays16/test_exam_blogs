@@ -85,27 +85,26 @@ export default {
     };
     
     const onSubmit = async () => {
-  if (!form.value.title || !form.value.content) {
-    $q.notify({
-      color: 'negative',
-      message: 'Please fill in all required fields',
-      icon: 'warning'
-    });
-    return;
-  }
-  
-  loading.value = true;
-  
-  // Create a request payload with proper format
-  const payload = {
-    title: form.value.title,
-    content: form.value.content,
-    status: form.value.status // Extract just the value from the status object
+      if (!form.value.title || !form.value.content) {
+        $q.notify({
+          color: 'negative',
+          message: 'Please fill in all required fields',
+          icon: 'warning'
+        });
+        return;
+      }
+      
+      loading.value = true;
+      
+      // Create a request payload with proper format
+      const payload = {
+        title: form.value.title,
+        content: form.value.content,
+        status: form.value.status 
   };
   
   try {
     await api.post('/blogs', payload);
-    
     $q.notify({
       color: 'positive',
       message: 'Blog created successfully',
@@ -114,10 +113,10 @@ export default {
     
     resetForm();
     isOpen.value = false;
+    
     emit('blog-added');
   } catch (error) {
     console.error('Failed to create blog:', error);
-    
     $q.notify({
       color: 'negative',
       message: error.response?.data?.message || 'Failed to create blog. Please try again.',

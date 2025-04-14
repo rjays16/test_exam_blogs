@@ -155,20 +155,20 @@
     const errorMessage = error.response?.data?.errors 
       ? Object.values(error.response.data.errors).flat().join('\n') 
       : error.response?.data?.message || 'Registration failed'
-    
+      
       if ($q.notify) {
-  $q.notify({
-    color: 'negative',
-    message: errorMessage,
-    icon: 'warning'
-  })
-} else {
-  // Fallback if notify isn't available
-  alert(errorMessage)
-  console.error('Notification error: $q.notify is not available')
-}
-  } finally {
-    loading.value = false
+        $q.notify({
+          color: 'negative',
+          message: errorMessage,
+          icon: 'warning'
+        })
+      } else {
+        // Fallback if notify isn't available
+        alert(errorMessage)
+        console.error('Notification error: $q.notify is not available')
+      }
+    } finally {
+      loading.value = false
   }
 }
   </script>
